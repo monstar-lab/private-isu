@@ -158,7 +158,6 @@ $container['helper'] = function ($c) {
             $posts = [];
             $postIds = [];
             foreach ($results as $post) {
-                $post['comment_count'] = $this->fetch_first('SELECT COUNT(*) AS `count` FROM `comments` WHERE `post_id` = ?', $post['id'])['count'];
                 $query = 'SELECT * FROM `comments` WHERE `post_id` = ? ORDER BY `created_at` DESC';
                 if (!$all_comments) {
                     $query .= ' LIMIT 3';
@@ -330,7 +329,7 @@ $app->get('/', function (Request $request, Response $response) {
 
     $db = $this->get('db');
     
-    $ps = $db->prepare('SELECT `posts`.`id`, `posts`.`user_id`, `posts`.`body`, `posts`.`mime`, `posts`.`created_at`, `users`.`account_name`, `users`.`passhash`, `users`.`authority`, `users`.`del_flg` FROM `posts` inner join `users` on `users`.`id` =  `posts`.`user_id` where `users`.`del_flg` = 0 ORDER BY `posts`.`created_at` DESC LIMIT '. POSTS_PER_PAGE);
+    $ps = $db->prepare('SELECT `posts`.`id`, `posts`.`user_id`, `posts`.`body`, `posts`.`mime`, `posts`.`created_at`, `users`.`account_name`, `users`.`passhash`, `users`.`authority`, `users`.`del_flg`, count(comments.post_id) as comment_count FROM `posts` inner join `users` on `users`.`id` =  `posts`.`user_id` left join comments on `posts`.id` = `comments`.`post_id` where `users`.`del_flg` = 0 group by comments.post_id ORDER BY `posts`.`created_at` DESC LIMIT '. POSTS_PER_PAGE);
     $ps->execute();
     $results = $ps->fetchAll(PDO::FETCH_ASSOC);
     $posts = $this->get('helper')->make_posts_index($results);
