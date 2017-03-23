@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Iscogram</title>
+        <link th:href="@{${baseUrl} + 'css/style.css'}" media="screen" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+        <div class="container">
+            <div th:replace="header :: header"></div>
+
+            <th:block th:replace="${content} :: ${content}"></th:block>
+        </div>
+        <script th:src="@{${baseUrl} + 'js/jquery-2.2.0.js'}"></script>
+        <script th:src="@{${baseUrl} + 'js/jquery.timeago.js'}"></script>
+        <script th:src="@{${baseUrl} + 'js/jquery.timeago.ja.js'}"></script>
+        <script th:src="@{${baseUrl} + 'js/main.js'}"></script>
+    </body>
+</html>

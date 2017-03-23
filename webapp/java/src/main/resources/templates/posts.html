@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div class="isu-posts" th:fragment="posts">
+    <th:block th:each="post : ${posts}">
+        <div th:replace="post :: post"></div>
+    </th:block>
+</div>
+</body>
+</html>

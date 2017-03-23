@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="user">
+    <div class="isu-user">
+        <div><span class="isu-user-account-name" th:text="${user.account_name + 'さん'}"></span>のページ</div>
+        <div>投稿数 <span class="isu-post-count" th:text="${post_count}"></span></div>
+        <div>コメント数 <span class="isu-comment-count" th:text="${comment_count}"></span></div>
+        <div>被コメント数 <span class="isu-commented-count" th:text="${commented_count}"></span></div>
+    </div>
+
+    <div th:replace="posts :: posts"></div>
+</th:block>
+</body>
+</html>

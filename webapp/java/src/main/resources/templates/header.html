@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="header" class="header">
+        <div class="isu-title">
+            <h1><a href="/">Iscogram</a></h1>
+        </div>
+        <div class="isu-header-menu">
+            <div th:if="${me == null || me.id == null}"><a th:href="@{${baseUrl} + 'login'}">ログイン</a></div>
+            <th:block th:if="${me != null && me.id != null}">
+            <div><a th:href="@{${baseUrl} + '@' + ${me.account_name}}"><span class="isu-account-name" th:text="${me.account_name}"></span>さん</a></div>
+            <?php if ($me['authority'] == 1): ?>
+            <div th:if="${me.authority == 1}"><a th:href="@{${baseUrl} + 'admin/banned'}">管理者用ページ</a></div>
+            <div><a th:href="@{${baseUrl} + 'logout'}">ログアウト</a></div>
+            </th:block>
+        </div>
+    </div>
+</body>
+</html>

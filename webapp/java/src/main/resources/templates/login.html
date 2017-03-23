@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="login">
+<div class="header">
+    <h1>ログイン</h1>
+</div>
+
+<div id="notice-message" class="alert alert-danger" th:if="${notice}" th:text="${notice}">
+</div>
+
+<div class="submit">
+    <form method="post" th:action="@{${baseUrl} + 'login'}">
+        <div class="form-account-name">
+            <span>アカウント名</span>
+            <input type="text" name="account_name" th:id="account_name">
+        </div>
+        <div class="form-password">
+            <span>パスワード</span>
+            <input type="password" name="password" th:id="password">
+        </div>
+        <div class="form-submit">
+            <input type="submit" name="submit" value="submit">
+        </div>
+    </form>
+</div>
+
+<div class="isu-register">
+    <a th:href="@{${baseUrl} + 'register'}">ユーザー登録</a>
+</div>
+</th:block>
+</body>
+</html>

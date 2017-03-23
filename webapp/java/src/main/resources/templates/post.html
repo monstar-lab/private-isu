@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div class="isu-post" th:fragment="post" th:id="${'pid_' + post.id}" th:attr="data-created-at=${post.formatDate()}">
+    <div class="isu-post-header">
+        <a th:href="@{${baseUrl} + '@' + ${post.user.account_name}}" class="isu-post-account-name" th:text="${post.user.account_name}"></a>
+        <a th:href="@{${baseUrl} + 'posts/' + ${post.id}}" class="isu-post-permalink">
+            <time class="timeago" th:datetime="${post.formatDate()}"></time>
+        </a>
+    </div>
+    <div class="isu-post-image">
+        <img th:src="@{${baseUrl + post.imageURL()}}" class="isu-image">
+    </div>
+    <div class="isu-post-text">
+        <a th:href="@{${baseUrl} + '@' + ${post.user.account_name}}" class="isu-post-account-name" th:text="${post.user.account_name}"></a>
+        <th:block th:text="${post.body}"></th:block>
+    </div>
+    <div class="isu-post-comment">
+        <div class="isu-post-comment-count">
+            comments: <b th:text="${post.comment_count}"></b>
+        </div>
+
+        <div class="isu-comment" th:each="comment : ${post.comments}">
+            <a th:href="@{${baseUrl} + '@' + ${comment.user.account_name}}" class="isu-comment-account-name" th:text="${comment.user.account_name}"></a>
+            <span class="isu-comment-text" th:text="${comment.comment}"></span>
+        </div>
+        <div class="isu-comment-form">
+            <form method="post" th:action="@{${baseUrl} + 'comment'}">
+                <input type="text" name="comment" id="comment">
+                <input type="hidden" name="post_id" th:value="${post.id}">
+                <input type="hidden" name="csrf_token" th:value="${csrf_token}">
+                <input type="submit" name="submit" value="submit">
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

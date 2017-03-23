@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <th:block th:fragment="index">
+    <div class="isu-submit">
+        <form method="post" th:action="@{${baseUrl}}" enctype="multipart/form-data">
+            <div class="isu-form">
+                <input type="file" name="file" value="file">
+            </div>
+            <div class="isu-form">
+                <textarea name="body"></textarea>
+            </div>
+            <div class="form-submit">
+                <input type="hidden" name="csrf_token" th:value="${csrf_token}">
+                <input type="submit" name="submit" value="submit">
+            </div>
+            <div id="notice-message" class="alert alert-danger" th:if="${notice}" th:text="${notice}">
+            </div>
+        </form>
+    </div>
+
+    <div th:replace="posts :: posts"></div>
+
+    <div id="isu-post-more">
+        <button id="isu-post-more-btn">もっと見る</button>
+        <img class="isu-loading-icon" th:src="@{${baseUrl} + 'img/ajax-loader.gif'}">
+    </div>
+    </th:block>
+</body>
+</html>
