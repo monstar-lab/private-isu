@@ -149,6 +149,56 @@ $container['helper'] = function ($c) {
             }
             return $posts;
         }
+        
+        
+        public function make_posts_index(array $results, $options = []) {
+            $options += ['all_comments' => false];
+            $all_comments = $options['all_comments'];
+
+            $posts = [];
+            $postIds = [];
+            foreach ($results as $post) {
+                $query = 'SELECT * FROM `comments` WHERE `post_id` = ? ORDER BY `created_at` DESC';
+                if (!$all_comments) {
+                    $query .= ' LIMIT 3';
+                }
+
+                $ps = $this->db()->prepare($query);
+                $ps->execute([$post['id']]);
+                $comments = $ps->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($comments as &$comment) {
+                    $comment['user'] = $this->fetch_first('SELECT * FROM `users` WHERE `id` = ?', $comment['user_id']);
+                }
+                unset($comment);
+                $post['comments'] = array_reverse($comments);
+
+                
+                $user['account_name'] = $post['account_name'];
+                $user['passhash'] = $post['passhash'];
+                $user['authority'] = $post['authority'];
+                
+                $post['user'] = $user;
+                $posts[] = $post;
+                $postIds[] = $post['id'];
+                
+                if (count($posts) >= POSTS_PER_PAGE) {
+                    break;
+                }
+            }
+
+            $commentSql  = 'Select * from commnets where post_id in ' . implode(',', $postIds);  
+            $ps = $this->db()->prepare($commentSql);
+            $ps->execute();
+            $comments = $ps->fetchAll(PDO::FETCH_ASSOC);
+            $commentByPost = [];
+            foreach ($comments as $comment){
+                $commentByPost[$comment['post_id']][] = $comment;
+            }
+            echo '<pre>';
+            var_dump($commentByPost);
+            die();
+            return $posts;
+        }
 
     };
 };
@@ -290,10 +340,11 @@ $app->get('/', function (Request $request, Response $response) {
     $me = $this->get('helper')->get_session_user();
 
     $db = $this->get('db');
-    $ps = $db->prepare('SELECT `id`, `user_id`, `body`, `mime`, `created_at` FROM `posts` ORDER BY `created_at` DESC');
+    
+    $ps = $db->prepare('SELECT `posts`.`id`, `posts`.`user_id`, `posts`.`body`, `posts`.`mime`, `posts`.`created_at`, `users`.`account_name`, `users`.`passhash`, `users`.`authority`, `users`.`del_flg`, count(comments.post_id) as comment_count FROM `posts` inner join `users` on `users`.`id` =  `posts`.`user_id` left join comments on `posts`.id` = `comments`.`post_id` where `users`.`del_flg` = 0 group by comments.post_id ORDER BY `posts`.`created_at` DESC LIMIT '. POSTS_PER_PAGE);
     $ps->execute();
     $results = $ps->fetchAll(PDO::FETCH_ASSOC);
-    $posts = $this->get('helper')->make_posts($results);
+    $posts = $this->get('helper')->make_posts_index($results);
 
     return $this->view->render($response, 'index.php', ['posts' => $posts, 'me' => $me]);
 });
