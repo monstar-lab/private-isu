@@ -185,6 +185,18 @@ $container['helper'] = function ($c) {
                     break;
                 }
             }
+
+            $commentSql  = 'Select * from commnets where post_id in ' . implode(',', $postIds);  
+            $ps = $this->db()->prepare($commentSql);
+            $ps->execute();
+            $comments = $ps->fetchAll(PDO::FETCH_ASSOC);
+            $commentByPost = [];
+            foreach ($comments as $comment){
+                $commentByPost[$comment['post_id']][] = $comment;
+            }
+            echo '<pre>';
+            var_dump($commentByPost);
+            die();
             return $posts;
         }
 
